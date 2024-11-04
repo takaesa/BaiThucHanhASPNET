@@ -3,6 +3,7 @@ using BaiThucHanhASPNET.Models;
 using BaiThucHanhASPNET.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Study_ASP.NET_Core_MVC.Models.Authentication;
 using System.Diagnostics;
 using X.PagedList;
 
@@ -17,7 +18,7 @@ namespace BaiThucHanhASPNET.Controllers
         {
             _logger = logger;
         }
-
+        [Authentication]
         public IActionResult Index(int?page )
         {
             int pageSize = 8;
