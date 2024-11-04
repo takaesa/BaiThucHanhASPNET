@@ -116,6 +116,41 @@ namespace BaiThucHanhASPNET.Areas.Admin.Controllers
             return RedirectToAction("DanhMucSanPham", "HomeAdmin");
         }
 
+        [Route("danhsachkhachhang")]
 
+        public IActionResult DanhSachKhachHang(int? page)
+        {
+            int pageSize = 12;
+            int pageNumber = page == null || page < 0 ? 1 : page.Value;
+            var lstkhachhang = db.TKhachHangs.AsNoTracking().OrderBy(x => x.TenKhachHang);
+
+            PagedList<TKhachHang> lst = new PagedList<TKhachHang>(lstkhachhang, pageNumber, pageSize);
+
+            return View(lst);
+        }
+
+        [Route("ThemKhachHangMoi")]
+        [HttpGet]
+
+        public IActionResult ThemKhachHangMoi()
+        {
+            ViewBag.Username = new SelectList(db.TKhachHangs.ToList(), "MaKhanhHang", "TenKhachHang");
+            /*SelectList(db.TKhachHangs.ToList(), "Username", "Username")*/
+            return View();
+        }
+
+        [Route("ThemKhachHangMoi")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult ThemKhachHangMoi(TKhachHang khachHang)
+        {
+            if (ModelState.IsValid)
+            {
+                db.TKhachHangs.Add(khachHang);
+                db.SaveChanges();
+                return RedirectToAction("DanhSachKhachHang");
+            }
+            return View(khachHang);
+        }
     }
 }

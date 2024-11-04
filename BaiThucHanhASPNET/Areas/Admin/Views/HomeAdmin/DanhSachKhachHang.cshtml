@@ -1,0 +1,77 @@
+﻿@using BaiThucHanhASPNET.Models;
+@using X.PagedList.Mvc.Core;
+@model X.PagedList.IPagedList<TKhachHang>;
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    ViewData["Title"] = "DanhSachKhachHang";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<h2>Danh sách khách hàng</h2>
+
+<p>
+    <a asp-action="ThemKhachHangMoi">Create New</a>
+</p>
+<p>@TempData["Message"]</p>
+<table class="table">
+    <thead>
+        <tr class="table-warning">
+            <th>
+                Ten KH
+            </th>
+            <th>
+                Ngay sinh
+            </th>
+            <th>
+                SDT
+            </th>
+            <th>
+                Dia chi
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+
+        @{
+            int i = 0;
+            string @cls1 = "table-success";
+        }
+        @foreach (var item in Model)
+        {
+            i += 1;
+            cls1 = "table-success";
+            if (i % 2 == 0)
+            {
+                cls1 = "table-primary";
+            }
+
+            <tr class="@cls1">
+            <td>
+                @Html.DisplayFor(modelItem => item.TenKhachHang)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.NgaySinh)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SoDienThoai)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DiaChi)
+            </td>
+            <td>
+                <a asp-action="SuaKhachHang" asp-route-maKhachHang="@item.MaKhanhHang">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.MaKhanhHang">Details</a> |
+                <a asp-action="XoaKhachHang" asp-route-maKhachHang="@item.MaKhanhHang">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+
+@Html.PagedListPager(Model, page => Url.Action("DanhSachKhachHang", new { page = page }), new X.PagedList.Mvc.Core.PagedListRenderOptions()
+{
+    LiElementClasses = new List<String> { "page-item" },
+    PageClasses = new List<String> { "page-link" }
+})  
