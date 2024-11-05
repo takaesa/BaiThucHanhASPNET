@@ -116,6 +116,7 @@ namespace BaiThucHanhASPNET.Areas.Admin.Controllers
             return RedirectToAction("DanhMucSanPham", "HomeAdmin");
         }
 
+        
         [Route("danhsachkhachhang")]
 
         public IActionResult DanhSachKhachHang(int? page)
@@ -134,7 +135,6 @@ namespace BaiThucHanhASPNET.Areas.Admin.Controllers
 
         public IActionResult ThemKhachHangMoi()
         {
-            ViewBag.Username = new SelectList(db.TKhachHangs.ToList(), "MaKhanhHang", "TenKhachHang");
             /*SelectList(db.TKhachHangs.ToList(), "Username", "Username")*/
             return View();
         }
@@ -144,13 +144,59 @@ namespace BaiThucHanhASPNET.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult ThemKhachHangMoi(TKhachHang khachHang)
         {
-            if (ModelState.IsValid)
+            var compare = db.TKhachHangs.Where(x => x.MaKhanhHang == khachHang.MaKhanhHang).ToList();
+            if (compare.Count()>0)
+            {
+                return RedirectToAction("DanhMucSanPham", "HomeAdmin");
+            }
+            else if (ModelState.IsValid)
             {
                 db.TKhachHangs.Add(khachHang);
                 db.SaveChanges();
                 return RedirectToAction("DanhSachKhachHang");
             }
             return View(khachHang);
+        }
+
+        [Route("SuaKhachHang")]
+        [HttpGet]
+
+        public IActionResult SuaKhachHang(string maKhachHang)
+        {
+            ViewBag.MaChatLieu = new SelectList(db.TChatLieus.ToList(), "MaChatLieu", "ChatLieu");
+            ViewBag.MaHangSx = new SelectList(db.THangSxes.ToList(), "MaHangSx", "HangSx");
+            ViewBag.MaNuocSx = new SelectList(db.TQuocGia.ToList(), "MaNuoc", "TenNuoc");
+            ViewBag.MaLoai = new SelectList(db.TLoaiSps.ToList(), "MaLoai", "Loai");
+            ViewBag.MaDt = new SelectList(db.TLoaiDts.ToList(), "MaDt", "TenLoai");
+
+            var khachHang = db.TDanhMucSps.Find(maKhachHang);
+            return View(khachHang);
+        }
+
+        [Route("SuaKhachHang")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult SuaKhachHang(TKhachHang  khachHang)
+        {
+            if (ModelState.IsValid)
+            {
+                db.TKhachHangs.Update(khachHang);
+                db.SaveChanges();
+                return RedirectToAction("DanhSachKhachHang", "HomeAdmin");
+            }
+            return View(khachHang);
+        }
+
+        [Route("XoaKhachHang")]
+        [HttpGet]
+        public IActionResult XoaKhachHang(string maKhachHang)
+        {
+
+            db.Remove(db.TKhachHangs.Find(maKhachHang));
+            db.SaveChanges();
+
+            TempData["Message"] = "Khach hang da duoc xoa";
+            return RedirectToAction("DanhSachKhachHang", "HomeAdmin");
         }
     }
 }
